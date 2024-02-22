@@ -19,6 +19,8 @@ import CurrencyBitcoinIcon from "@mui/icons-material/CurrencyBitcoin";
 import ScienceIcon from "@mui/icons-material/Science";
 import MenuIcon from "@mui/icons-material/Menu";
 import StarIcon from "@mui/icons-material/Star";
+import ThermostatIcon from "@mui/icons-material/Thermostat";
+
 import { Link } from "react-router-dom";
 
 const drawerWidth = 240;
@@ -93,7 +95,7 @@ const GetIcon_Link = (text) => {
     case "Defi":
       return [<CurrencyBitcoinIcon />, "/"];
     case "Starred":
-      return [<StarIcon />, "/starred"];
+      return [<ThermostatIcon />, "/starred"];
     case "Drafts":
       return [<ScienceIcon />, "/study"];
     default:

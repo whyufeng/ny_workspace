@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Homepage from "./pages/Home";
-import Starred from "./pages/Starred";
+import LocalWeather from "./pages/LocalWeather";
 import Study from "./pages/Study";
 
 const router = createBrowserRouter([
@@ -11,7 +11,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/starred",
-    element: <Starred />,
+    element: <LocalWeather />,
   },
   {
     path: "/study",

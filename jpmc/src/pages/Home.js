@@ -47,15 +47,20 @@ export default function Home() {
   useEffect(() => {
     let retRows = [];
     coinList.forEach((coin, idx) => {
-      retRows.push(
-        createData(
-          idx,
-          coin,
-          wsData[coin].price,
-          wsData[coin].high24h,
-          wsData[coin].low24h
-        )
-      );
+      if (wsData[coin] === undefined) {
+        retRows.push(createData(idx, coin, null, null, null));
+      } else {
+        retRows.push(
+          createData(
+            idx,
+            coin,
+            wsData[coin].price,
+            wsData[coin].high24h,
+            wsData[coin].low24h
+          )
+        );
+      }
+
       setRows(retRows);
     });
   }, [coinList, wsData]);

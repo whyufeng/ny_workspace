@@ -14,7 +14,6 @@ export default function CoinSelect() {
   const [coinList, setCoinList] = React.useContext(CoinContext);
 
   const [coin, setCoin] = React.useState("");
-
   const handleChange = (event) => {
     setCoin(event.target.value);
   };

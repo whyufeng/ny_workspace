@@ -1,0 +1,149 @@
+import { useState, useEffect } from "react";
+import { LineChart } from "@mui/x-charts/LineChart";
+import {
+  Box,
+  Stack,
+  Typography,
+  autocompleteClasses,
+  styled,
+} from "@mui/material";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import { red, blue } from "@mui/material/colors";
+
+const dateTimeConverter = (dataStringOld) => {
+  const inputDateString = dataStringOld;
+  const inputDate = new Date(inputDateString);
+
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  const monthName = months[inputDate.getMonth()];
+  const dayOfMonth = inputDate.getDate();
+  const hour = inputDate.getHours();
+  const ampm = hour >= 12 ? "pm" : "am";
+  const formattedHour = hour % 12 || 12; // Convert 0 to 12 for midnight
+
+  const resultString = `${monthName} ${dayOfMonth}${getDaySuffix(
+    dayOfMonth
+  )} ${formattedHour}${ampm}`;
+
+  function getDaySuffix(day) {
+    if (day >= 11 && day <= 13) {
+      return "th";
+    }
+    switch (day % 10) {
+      case 1:
+        return "st";
+      case 2:
+        return "nd";
+      case 3:
+        return "rd";
+      default:
+        return "th";
+    }
+  }
+  return resultString;
+};
+
+export default function ForcastWeather(props) {
+  const { lat, long, unit } = props;
+  const [data, setData] = useState([]);
+  const WeatherAPIKey = process.env.REACT_APP_WEATHER_API_KEY;
+
+  useEffect(() => {
+    const FetchData = async () => {
+      const fetchUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${long}&cnt=40&units=${unit}&appid=${WeatherAPIKey}`;
+      await fetch(fetchUrl)
+        .then((res) => res.json())
+        .then((result) => {
+          if (result.list) {
+            const _ret = result.list.map((ele) => {
+              return {
+                temp: ele.main.temp,
+                feels_like: ele.main.feels_like,
+                weather_descrip: ele.weather[0].description,
+                weather_icon: ele.weather[0].icon,
+                local_time: ele.dt_txt,
+              };
+            });
+            setData(_ret);
+          }
+        });
+    };
+    FetchData();
+  }, [lat, long, unit]);
+
+  const weatherTabs = (data) => {
+    return data.map((ele, index) => {
+      const iconURL = `https://openweathermap.org/img/wn/${ele.weather_icon}@2x.png`;
+      // console.log(iconURL);
+      const fontColor = ele.feels_like >= ele.temp ? red[500] : blue[700];
+
+      return (
+        <Card key={index} sx={{ minWidth: "10vw", aspectRatio: 0.6 }}>
+          <CardMedia
+            component="img"
+            sx={{ padding: "0 1em 0 1em" }}
+            image={iconURL}
+            alt=""
+          />
+          <CardContent>
+            <Typography variant="body1" fontStyle={"italic"}>
+              {ele.weather_descrip}
+            </Typography>
+            <Typography variant="body1" fontStyle={"italic"}>
+              {dateTimeConverter(ele.local_time)}
+            </Typography>
+            <Typography variant="body2">
+              Temperature: {Math.round(ele.temp * 10) / 10}
+            </Typography>
+            <Typography variant="body1" color={fontColor}>
+              Feels Like: {Math.round(ele.feels_like * 10) / 10}
+            </Typography>
+          </CardContent>
+        </Card>
+      );
+    });
+  };
+
+  if (data.length === 0) {
+    return (
+      <Box
+        sx={{ display: "flex", fontStyle: "italic" }}
+        justifyContent={"center"}
+      >
+        loading
+      </Box>
+    );
+  } else {
+    return (
+      <Box sx={{ minHeight: "11em" }} justifyContent={"center"}>
+        <Stack
+          // component={"ul"}
+          display={"flex"}
+          // justifyContent={"left"}
+          direction="row"
+          sx={{ maxWidth: "90vw", overflowX: "scroll" }}
+          spacing={2}
+          padding={2}
+        >
+          {weatherTabs(data)}
+        </Stack>
+      </Box>
+    );
+  }
+}
