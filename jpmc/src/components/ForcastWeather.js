@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
-import { LineChart } from "@mui/x-charts/LineChart";
+import {
+  LineChart,
+  LinePlot,
+  lineElementClasses,
+} from "@mui/x-charts/LineChart";
 import {
   Box,
   Stack,
@@ -71,6 +75,7 @@ export default function ForcastWeather(props) {
         .then((res) => res.json())
         .then((result) => {
           if (result.list) {
+            console.log(result.list);
             const _ret = result.list.map((ele) => {
               return {
                 temp: ele.main.temp,
@@ -78,6 +83,7 @@ export default function ForcastWeather(props) {
                 weather_descrip: ele.weather[0].description,
                 weather_icon: ele.weather[0].icon,
                 local_time: ele.dt_txt,
+                unix_time: ele.dt,
               };
             });
             setData(_ret);
@@ -87,6 +93,24 @@ export default function ForcastWeather(props) {
     FetchData();
   }, [lat, long, unit]);
 
+  const weatherChart = (data) => {
+    const time_x = data.map(
+      (ele) => (ele.unix_time - data[0].unix_time) / 3600
+    );
+    const temp_y = data.map((ele) => ele.feels_like);
+    return (
+      <Box sx={{ display: "flex" }} justifyContent={"center"}>
+        <LineChart
+          xAxis={[{ data: time_x, labelFontSize: 200 }]}
+          yAxis={[{ min: 0 }]}
+          series={[{ type: "line", data: temp_y }]}
+          width={500}
+          height={300}
+        />
+      </Box>
+    );
+  };
+
   const weatherTabs = (data) => {
     return data.map((ele, index) => {
       const iconURL = `https://openweathermap.org/img/wn/${ele.weather_icon}@2x.png`;
@@ -94,7 +118,7 @@ export default function ForcastWeather(props) {
       const fontColor = ele.feels_like >= ele.temp ? red[500] : blue[700];
 
       return (
-        <Card key={index} sx={{ minWidth: "10vw", aspectRatio: 0.6 }}>
+        <Card key={index} sx={{ minWidth: "6vw", aspectRatio: 0.6 }}>
           <CardMedia
             component="img"
             sx={{ padding: "0 1em 0 1em" }}
@@ -102,7 +126,11 @@ export default function ForcastWeather(props) {
             alt=""
           />
           <CardContent>
-            <Typography variant="body1" fontStyle={"italic"}>
+            <Typography
+              variant="body1"
+              fontStyle={"italic"}
+              sx={{ textTransform: "capitalize" }}
+            >
               {ele.weather_descrip}
             </Typography>
             <Typography variant="body1" fontStyle={"italic"}>
@@ -131,19 +159,22 @@ export default function ForcastWeather(props) {
     );
   } else {
     return (
-      <Box sx={{ minHeight: "11em" }} justifyContent={"center"}>
-        <Stack
-          // component={"ul"}
-          display={"flex"}
-          // justifyContent={"left"}
-          direction="row"
-          sx={{ maxWidth: "90vw", overflowX: "scroll" }}
-          spacing={2}
-          padding={2}
-        >
-          {weatherTabs(data)}
-        </Stack>
-      </Box>
+      <>
+        <Box>{weatherChart(data)}</Box>
+        <Box sx={{ minHeight: "11em" }} justifyContent={"center"}>
+          <Stack
+            // component={"ul"}
+            display={"flex"}
+            // justifyContent={"left"}
+            direction="row"
+            sx={{ maxWidth: "90vw", overflowX: "scroll" }}
+            spacing={2}
+            padding={2}
+          >
+            {weatherTabs(data)}
+          </Stack>
+        </Box>
+      </>
     );
   }
 }
