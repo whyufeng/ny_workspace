@@ -15,6 +15,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import { red, blue } from "@mui/material/colors";
+import { FORCAST_5_DAYS_3_HOURS } from "../data/APIs";
 
 const dateTimeConverter = (dataStringOld) => {
   const inputDateString = dataStringOld;
@@ -67,10 +68,10 @@ export default function ForcastWeather(props) {
   const { lat, long, unit } = props;
   const [data, setData] = useState([]);
   const WeatherAPIKey = process.env.REACT_APP_WEATHER_API_KEY;
+  const fetchUrl = FORCAST_5_DAYS_3_HOURS(lat, long, unit, WeatherAPIKey);
 
   useEffect(() => {
     const FetchData = async () => {
-      const fetchUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${long}&cnt=40&units=${unit}&appid=${WeatherAPIKey}`;
       await fetch(fetchUrl)
         .then((res) => res.json())
         .then((result) => {
@@ -171,7 +172,7 @@ export default function ForcastWeather(props) {
             spacing={2}
             padding={2}
           >
-            {weatherTabs(data)}
+            {weatherTabs(data.slice(0, 6))}
           </Stack>
         </Box>
       </>

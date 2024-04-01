@@ -21,6 +21,9 @@
 
 # backend stuff
 /backend
+/jupyter notebook
+/jpmc_vite
+/jpmc
 
 npm-debug.log*
 yarn-debug.log*
