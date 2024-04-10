@@ -1,15 +1,12 @@
 import { useState, useEffect } from "react";
 import { Box, Stack, Typography, Grid } from "@mui/material";
 import Divider from "@mui/material/Divider";
-// import.meta.env.VITE_APP_WEATHER_API_KEY 
 
 export default function CurrentWeather(props) {
   const { lat, long, unit } = props;
   const [data, setData] = useState([]);
-  console.log("!!")
-  const WeatherAPIKey = import.meta.env.VITE_APP_WEATHER_API_KEY ;
+  const WeatherAPIKey = import.meta.env.VITE_APP_WEATHER_API_KEY;
   
-  console.log(WeatherAPIKey)
   useEffect(() => {
     const FetchData = async () => {
       const fetchUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&units=${unit}&appid=${WeatherAPIKey}`;

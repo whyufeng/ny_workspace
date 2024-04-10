@@ -4,6 +4,7 @@ import CoinSelect from "../components/CoinSelect";
 import CoinsTable from "../components/CoinsTable";
 import { useState, useEffect, createContext } from "react";
 import { WebSocketResult as startRetrieveData } from "../components/WebSocket";
+import SearchBox from "../components/ComboSearchBox"
 
 export const CoinContext = createContext({
   coinlist: [],
@@ -75,6 +76,7 @@ export default function Home() {
       <MiniDrawer />
       <Container component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
+        <SearchBox />
         <CoinContext.Provider value={[coinList, setCoinList]}>
           <Grid container justifyContent={"flex-end"}>
             <CoinSelect />
